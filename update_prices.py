@@ -75,7 +75,12 @@ def upsert_product(product):
     ).json()
     
     if check and len(check) > 0:
-        return check[0]["id"]
+        if isinstance(check, list) and len(check) > 0:
+    return check[0]["id"]
+else:
+    # ถ้าไม่มีข้อมูล ให้สร้างใหม่
+    print(f"   📦 กำลังเพิ่มสินค้าใหม่: {product['name']}")
+    # ... (โค้ดสร้างสินค้าใหม่)
     
     # ถ้าไม่มี -> สร้างใหม่
     new_prod = {
