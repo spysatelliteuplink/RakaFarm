@@ -1,21 +1,31 @@
 name: "Run Price Update"
 on:
   workflow_dispatch:
+  schedule:
+    - cron: "0 23 * * *"
 
 jobs:
   update:
     runs-on: ubuntu-latest
+    env:
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true   # บังคับใช้ Node 24 (เผื่อไว้)
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
-        
+        uses: actions/checkout@v5   # อัปเกรดจาก v4
+
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6   # อัปเกรดจาก v5
         with:
           python-version: '3.11'
-          
+
       - name: Install Library
         run: pip install requests
-        
+
       - name: Run Script
-        run: python update_prices.py
+        run: |
+          set -ex
+          python -u update_prices.py
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
